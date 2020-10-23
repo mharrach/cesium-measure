@@ -50,24 +50,26 @@
         display: none;
         position: absolute;
         background-color: #f1f1f1;
-        min-width: 160px;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         z-index: 1;
       }
 
       /* Links inside the dropdown */
-      .dropdown-content a {
+      .dropdown-content button {
         color: black;
         padding: 12px 16px;
         text-decoration: none;
         display: block;
       }
 
-      /* Change color of dropdown links on hover */
-      .dropdown-content a:hover {background-color: #ddd}
+      /* Change color of dropdown links on hover
+      .dropdown-content button:hover {background-color: #ddd}*/
 
       /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
       .show {display:block;}
+
+      .selected{background-color: green;}
+
     </style>
   </head>
   <body>
@@ -76,41 +78,73 @@
     <div class="dropdown">
       <button onclick="myFunction()" class="dropbtn">M</button>
       <div id="myDropdown" class="dropdown-content">
-        <a href="#">O</a>
-        <a href="#">U</a>
-        <a href="#">N</a>
-        <a href="#">A</a>
+        <button id="O">O</button>
+        <button id="U">U</button>
+        <button id="N">N</button>
+        <button>A</button>
       </div>
     </div>
     <script>
       var viewer = new Cesium.Viewer("cesiumContainer");
-      window.viewer = viewer;
       const toolbar = document.querySelector("div.cesium-viewer-toolbar");
       const modeButton = document.querySelector("div.navigationHelpButtonContainer");
-      /*const myButton = document.createElement("button");
-      myButton.classList.add("cesium-button", "cesium-toolbar-button");
-      myButton.innerHTML = "M";*/
       myButton = document.querySelector(".dropdown");
       toolbar.insertBefore(myButton, modeButton);
-      /* When the user clicks on the button,
-      toggle between hiding and showing the dropdown content */
+
       function myFunction() {
         document.getElementById("myDropdown").classList.toggle("show");
       }
 
-      // Close the dropdown menu if the user clicks outside of it
-      window.onclick = function(event) {
-        if (!event.target.matches('.dropbtn')) {
-          var dropdowns = document.getElementsByClassName("dropdown-content");
-          var i;
-          for (i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-              openDropdown.classList.remove('show');
+      document.querySelectorAll('button').forEach(function(e) {
+        e.addEventListener('click', function() {
+          if (this.className != 'dropbtn') {
+            var dropdowns = document.getElementsByClassName("dropdown-content")[0].children;
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+              var openDropdown = dropdowns[i];
+              if (openDropdown.classList.contains('selected')) {
+                openDropdown.classList.remove('selected');
+              }
+            }
+            this.classList.toggle('selected');
+            if (this.id == "O") {
+              var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+              handler.setInputAction(function (event) {
+                  console.log(event.position);
+                  handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+              }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+            }
+            else if (this.id == "U") {
+              var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+              handler.setInputAction(function (event) {
+                  var ellipsoid = viewer.scene.globe.ellipsoid;
+                  var cartesian = viewer.camera.pickEllipsoid(event.position, ellipsoid);
+                  console.log(cartesian);
+                  handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+              }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+            }
+            else if (this.id == "N") {
+              var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+              handler.setInputAction(function (event) {
+                  // Screen coordinates to world coordinates key points
+                  var ellipsoid = viewer.scene.globe.ellipsoid;
+                  var cartesian = viewer.camera.pickEllipsoid(event.position, ellipsoid);
+                  //Converting Cartesian coordinates to geographic coordinates
+                  var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+                  console.log(cartographic);
+                  //Decimal representation of radians to degrees
+                  var lon = Cesium.Math.toDegrees(cartographic.longitude);
+                  var lat = Cesium.Math.toDegrees(cartographic.latitude);
+                  // Get altitude
+                  var height1 = viewer.scene.globe.getHeight(cartographic);
+                  var height2 = cartographic.height;
+                  handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+              }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
             }
           }
-        }
-      }
+        })
+      });
+
     </script>
     <script src="test.js"></script>
   </body>
