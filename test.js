@@ -18,7 +18,7 @@ var orientation = Cesium.Transforms.headingPitchRollQuaternion(
   origin,
   hpr
 );
-console.log(orientation);
+//console.log(orientation);
 
 var entity = viewer.entities.add({
   name: 'MySamples/jellyfish/scene.gltf',
