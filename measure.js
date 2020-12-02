@@ -121,15 +121,15 @@ class Shape{
                     position2 = movingPosition;
                 }
             }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-            
-            //console.log(this.getLength());
+
+            let that = this;
 
             function getMidpointCall(){
-                return this.getMidpoint(); //when I do "this.getMidpoint() it doesn't work!"
+                return that.getMidpoint(); 
             }
 
             function getLengthCall(){
-                return this.getLength(); //when I do "this.getLength() it doesn't work!"
+                return that.getLength();
             }
 
             var label = viewer.entities.add({
@@ -182,10 +182,8 @@ class Shape{
                 that.positions[that.positions.length - 1] = cartesian2;
             }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-            //console.log(that.getArea());
-
             function getMidpointCall(){
-                return that.getMidpoint(); // same problem here..
+                return that.getMidpoint();
             }
 
             function getAreaCall(){
@@ -197,7 +195,7 @@ class Shape{
                 label: {
                     // This callback updates the length to print each frame.
                     text: new Cesium.CallbackProperty(getAreaCall, false),
-                    font: "20px sans-serif",
+                    font: "10px sans-serif",
                     pixelOffset: new Cesium.Cartesian2(0.0, 20),
                 },
             });
