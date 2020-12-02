@@ -1,5 +1,3 @@
-// to do : close the line, and add labels
-
 class Shape{
     constructor(pointsCount, condition){
         this.pointsCount = pointsCount;
@@ -74,7 +72,7 @@ class Shape{
                 areaInMeters += this.calArea(points[triangles[i]], points[triangles[i + 1]], points[triangles[i + 2]]);
             }
         }
-        return areaInMeters + "m2";
+        return areaInMeters + " m2";
     }
 
     drawShape() {
@@ -138,6 +136,7 @@ class Shape{
                     // This callback updates the length to print each frame.
                     text: new Cesium.CallbackProperty(getLengthCall, false),
                     font: "20px sans-serif",
+                    fillColor: Cesium.Color.DEEPSKYBLUE,
                     pixelOffset: new Cesium.Cartesian2(0.0, 20),
                 },
             });
@@ -158,10 +157,10 @@ class Shape{
                     positions : new Cesium.CallbackProperty(function () {
                         return [cartesian, cartesian2];
                     }, false),
-                    width: 10.0,
+                    width: 2.0,
                     material: new Cesium.PolylineGlowMaterialProperty({
-                    color: Cesium.Color.DEEPSKYBLUE,
-                    glowPower: 0.25,
+                    color: Cesium.Color.WHITE,
+                    //glowPower: 0.25,
                     }),
                 }
             });
@@ -195,13 +194,14 @@ class Shape{
                 label: {
                     // This callback updates the length to print each frame.
                     text: new Cesium.CallbackProperty(getAreaCall, false),
-                    font: "10px sans-serif",
+                    font: "20px sans-serif",
+                    fillColor: Cesium.Color.DEEPSKYBLUE,
                     pixelOffset: new Cesium.Cartesian2(0.0, 20),
                 },
             });
-            
+
             this.entityId.push(line.id, polygon.id, label.id);
-            this.stopDrawing(); 
+            this.stopDrawing();
             
             return polygon;
 
@@ -295,88 +295,4 @@ let polygonShape = new Shape(3, function(){
     return dropdowns[2].classList.contains('selected');
 });
 polygonShape.setEventHandler();
-
-/*
-handler.setInputAction(function (event) {
-    for (let i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('selected')) {
-            if (openDropdown.id == "O") {
-                var position = viewer.camera.pickEllipsoid(event.position, ellipsoid);
-                var pointShape = new Shape(1,position);
-                pointShape.drawShape();
-            }
-
-            else if (openDropdown.id == "U") {
-                var position1 = viewer.camera.pickEllipsoid(event.position, ellipsoid);
-                var position2 = viewer.camera.pickEllipsoid(event.position, ellipsoid);
-                function getLinePositions() {
-                    return [position1, position2];
-                }
-                var positions = new Cesium.CallbackProperty(getLinePositions, false);
-                var lineShape = new Shape(2, positions);
-                lineShape.drawShape();
-
-                function getMidpoint(){
-                    return lineShape.getMidpoint(position1);
-                }
-
-                function getLength(){
-                    return lineShape.getLength(position1);
-                }
-
-                viewer.entities.add({
-                    position: new Cesium.CallbackProperty(getMidpoint, false),
-                    label: {
-                        // This callback updates the length to print each frame.
-                        text: new Cesium.CallbackProperty(getLength, false),
-                        font: "20px sans-serif",
-                        pixelOffset: new Cesium.Cartesian2(0.0, 20),
-                    },
-                });
-
-                handler.setInputAction(function(movement) {
-                    var movingPosition = viewer.camera.pickEllipsoid(movement.endPosition, ellipsoid);
-                    if (movingPosition) {
-                        position2 = movingPosition;
-                    }
-                }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);             
-
-                lineShape.stopDrawing();
-
-            }
-
-            else if (openDropdown.id == "N") {
-                var cartesian = viewer.camera.pickEllipsoid(event.position, ellipsoid);
-                var cartesian2 = viewer.camera.pickEllipsoid(event.position, ellipsoid);
-                pointslist.push(cartesian,cartesian2);
-
-                var pointShape = new Shape(1, cartesian);
-                pointShape.drawShape();
-                
-                var dynamicPositions = new Cesium.CallbackProperty(function () {
-                    return new Cesium.PolygonHierarchy(pointslist);
-                }, false);
-
-                var polygon = new Shape(3, dynamicPositions);
-                polygon.drawShape();
-
-                var area = polygon.getArea(pointslist);
-                console.log(area);
-
-                handler.setInputAction(function(movement) {
-                    cartesian2 = viewer.camera.pickEllipsoid(movement.endPosition, ellipsoid);
-                    pointslist[pointslist.length - 1] = cartesian2;
-                }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-                
-                polygon.stopDrawing();
-            }      
-        
-            else if (openDropdown.id == "A") {
-                viewer.entities.removeAll();
-                pointslist = [];
-            }
-        }
-    }
-}, Cesium.ScreenSpaceEventType.LEFT_CLICK);*/
 
